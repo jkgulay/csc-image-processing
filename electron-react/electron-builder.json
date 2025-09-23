@@ -1,0 +1,15 @@
+{
+    "appId": "com.takumis.app",
+    "files": ["dist-react","dist-electron"],
+    "icon": "./DesktopIcon.jpg",
+    "win": {
+        "target": ["portable","msi"]
+    },
+    "linux": {
+        "target":  "AppImage",
+        "category": "Utility"
+    },
+    "mac": {
+        "target": "dmg"
+    }
+}

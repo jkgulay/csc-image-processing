@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: fastApi_db
+    environment:
+      POSTGRES_USER: fastapi
+      POSTGRES_PASSWORD: fastapi
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - fastapi_db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - fastapi_net
+  minio:
+    image: minio/minio:latest
+    container_name: fastapi_minio
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ":9090"
+    networks:
+      - fastapi_net
+    volumes:
+      - minio_data:/data
+volumes:
+  fastapi_db:
+    name: fastapi_db
+  minio_data:
+    name: minio_data
+
+networks:
+  fastapi_net:
+    driver: bridge
+    name: fastapi_net
