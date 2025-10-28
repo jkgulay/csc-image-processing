@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: fastapi
       POSTGRES_PASSWORD: fastapi
-      PGDATA: /var/lib/postgresql/data
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - fastapi_db:/var/lib/postgresql/data
     ports:
@@ -36,3 +36,7 @@ networks:
   fastapi_net:
     driver: bridge
     name: fastapi_net
+
+# NOTE: If you see "initdb: error: directory ... exists but is not empty",
+# run the following command to remove the old volume before starting:
+# docker volume rm fastapi_db
