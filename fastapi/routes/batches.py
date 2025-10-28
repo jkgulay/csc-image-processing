@@ -558,3 +558,46 @@ def apply_filters_to_all_in_batch(
         "items": results,
     }
 
+
+@router.get("/{batch_id}/images", response_model=dict)
+def list_all_images_in_batch(batch_id: int, db: Session = Depends(get_db)):
+    """
+    Return all images (original and filtered) for a specific batch.
+    """
+    batch = db.query(Batch).get(batch_id)
+    if not batch:
+        raise HTTPException(status_code=404, detail="Batch not found")
+
+    # Original images from the batch
+    documents_data = [
+        {
+            "id": doc.id,
+            "file_id": doc.file_id,
+            "file_name": doc.file_name,
+            "file_type": doc.file_type,
+            "file_size": doc.file_size,
+            "url": f"/files/{doc.file_id}/preview",
+        }
+        for doc in batch.documents or []
+    ]
+
+    # Filtered images linked to the batch
+    filtered_data = [
+        {
+            "id": fi.id,
+            "filtered_file_id": fi.filtered_file_id,
+            "filtered_file_name": fi.filtered_file_name,
+            "filtered_file_type": fi.filtered_file_type,
+            "filtered_file_size": fi.filtered_file_size,
+            "status": fi.status,
+            "url": f"/files/{fi.filtered_file_id}/preview",
+        }
+        for fi in batch.filtered_images or []
+    ]
+
+    return {
+        "batch_id": batch.id,
+        "batch_name": batch.name,
+        "original_images": documents_data,
+        "filtered_images": filtered_data,
+    }

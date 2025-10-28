@@ -13,12 +13,7 @@ from core.minio_client import minio_client, BUCKET_NAME
 from models.database_models import (
     Document, Batch, DocumentBatch
 )
-from dto.opencv_dto import ApplyFilterRequest
-from utils.opencv_utils import (
-    _apply_filters_cv2,
-    _encode_image,
-    _guess_content_type,
-)
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -93,7 +88,8 @@ async def upload_file(
         },
         "document_batch": {"id": link.id, "batch_id": link.batch_id, "document_id": link.document_id},
     }
-# ... existing code ...
+
+
 @router.get("/{file_id}")
 def download_file(file_id: str, background_tasks: BackgroundTasks):
     try:
@@ -151,4 +147,3 @@ def preview_file(file_id: str, background_tasks: BackgroundTasks):
     media_type = getattr(stat, "content_type", None) or "application/octet-stream"
     return StreamingResponse(iterfile(), media_type=media_type, headers=headers)
 
-# New route: apply filters to a single stored file and stream the result (no DB write)
